@@ -2,6 +2,12 @@
 
 Full release notes with details on each version: [GitHub Releases](https://github.com/safishamsi/graphify/releases)
 
+## 0.5.1 (2026-04-26)
+
+- Add: `graphify stats [graph.json]` — read-only CLI subcommand that prints summary statistics (node/edge counts, density, isolated nodes, communities, largest community size, edge-confidence distribution, file-type breakdown, top hubs by degree). Supports `--top N` and `--json` for scripting. Pure AST/graph read — no LLM, no network.
+- Add: `tests/test_stats.py` — 18 unit tests covering empty-graph edge case, density, deterministic top-hub tie-breaking, confidence defaults, and JSON serializability.
+- Add: `tests/test_cli_smoke.py` — 20 end-to-end CLI smoke tests against a synthetic hello-world app, exercising `--help`, `stats`, `explain`, `path`, `query`, `benchmark`, and `check-update`. Includes a regression guard that asserts every dispatched subcommand in `__main__.py` is documented in `--help`.
+
 ## 0.4.23 (2026-04-18)
 
 - Fix: stale skill version warning persists after running `graphify install` when multiple platforms were previously installed — `graphify install` now refreshes `.graphify_version` in all other known skill directories so the warning clears across the board (#178)

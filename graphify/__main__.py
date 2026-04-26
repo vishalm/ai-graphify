@@ -1005,6 +1005,9 @@ def main() -> None:
         print("    --memory-dir DIR        memory directory (default: graphify-out/memory)")
         print("  check-update <path>     check needs_update flag and notify if semantic re-extraction is pending (cron-safe)")
         print("  benchmark [graph.json]  measure token reduction vs naive full-corpus approach")
+        print("  stats [graph.json]      print summary statistics (nodes, edges, communities, top hubs)")
+        print("    --top N                 number of top hubs to show (default 5)")
+        print("    --json                  emit machine-readable JSON instead of text")
         print("  hook install            install post-commit/post-checkout git hooks (all platforms)")
         print("  hook uninstall          remove git hooks")
         print("  hook status             check if git hooks are installed")
@@ -1496,6 +1499,43 @@ def main() -> None:
                 pass
         result = run_benchmark(graph_path, corpus_words=corpus_words)
         print_benchmark(result)
+
+    elif cmd == "stats":
+        from graphify.stats import load_graph, compute_stats, format_stats
+        args = sys.argv[2:]
+        graph_path = "graphify-out/graph.json"
+        top_n = 5
+        as_json = False
+        i = 0
+        while i < len(args):
+            a = args[i]
+            if a == "--top" and i + 1 < len(args):
+                try:
+                    top_n = int(args[i + 1])
+                except ValueError:
+                    print(f"error: --top expects an integer, got {args[i + 1]!r}", file=sys.stderr)
+                    sys.exit(1)
+                i += 2
+            elif a == "--json":
+                as_json = True
+                i += 1
+            elif not a.startswith("--"):
+                graph_path = a
+                i += 1
+            else:
+                print(f"error: unknown option {a!r}", file=sys.stderr)
+                sys.exit(1)
+        gp = Path(graph_path).resolve()
+        if not gp.exists():
+            print(f"error: graph file not found: {gp}", file=sys.stderr)
+            sys.exit(1)
+        G = load_graph(gp)
+        stats = compute_stats(G, top_n=top_n)
+        if as_json:
+            print(json.dumps(stats, indent=2, default=str))
+        else:
+            print(format_stats(stats))
+
     else:
         print(f"error: unknown command '{cmd}'", file=sys.stderr)
         print("Run 'graphify --help' for usage.", file=sys.stderr)

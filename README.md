@@ -165,7 +165,7 @@ Uninstall with the matching uninstall command (e.g. `graphify claude uninstall`)
 
 The always-on hook surfaces `GRAPH_REPORT.md` — a one-page summary of god nodes, communities, and surprising connections. Your assistant reads this before searching files, so it navigates by structure instead of keyword matching. That covers most everyday questions.
 
-`/graphify query`, `/graphify path`, and `/graphify explain` go deeper: they traverse the raw `graph.json` hop by hop, trace exact paths between nodes, and surface edge-level detail (relation type, confidence score, source location). Use them when you want a specific question answered from the graph rather than a general orientation.
+`/graphify query`, `/graphify path`, `/graphify explain`, and `/graphify stats` go deeper: they traverse the raw `graph.json` hop by hop, trace exact paths between nodes, surface edge-level detail (relation type, confidence score, source location), and summarise the graph at a glance. Use them when you want a specific question answered from the graph rather than a general orientation.
 
 Think of it this way: the always-on hook gives your assistant a map. The `/graphify` commands let it navigate the map precisely.
 
@@ -333,6 +333,8 @@ graphify query "what is CfgNode?" --budget 500
 graphify query "..." --graph path/to/graph.json
 graphify path "DigestAuth" "Response"       # shortest path between two nodes
 graphify explain "SwinTransformer"           # plain-language explanation of a node
+graphify stats                               # nodes, edges, communities, top hubs at a glance
+graphify stats --json --top 10               # machine-readable summary, top 10 hubs
 
 # add content and update the graph from the terminal
 graphify add https://arxiv.org/abs/1706.03762          # fetch paper, save to ./raw, update graph
